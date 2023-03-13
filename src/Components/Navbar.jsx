@@ -30,9 +30,7 @@ const Navbar = () => {
               </svg>
 
               {cart.length > 0 && (
-                <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -right-0.5">
-                  {cart.length}
-                </div>
+                <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -right-0.5"></div>
               )}
             </a>
           </div>

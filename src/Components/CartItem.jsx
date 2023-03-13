@@ -26,7 +26,7 @@ const CartItem = (props) => {
       props.item.price,
       props.item.description,
       props.item.image,
-      props.item.quantity
+      quantity
     );
 
     setQuantity((prevQ) => prevQ - 1);

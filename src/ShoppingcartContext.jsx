@@ -14,18 +14,29 @@ export const ShoppingcartProvider = ({ children }) => {
 
   const addToCart = (name, productId, price, description, image, quantity) => {
     const checkCart = cart.findIndex((item) => item.productId === productId);
+    console.log('checkCart:');
+    console.log(checkCart);
+    if (checkCart > -1) {
+      //^ If cart array have same "productId", add quantity + 1 and run  setTotalPrice((prevPrice) => prevPrice + price);
+      console.log('Adding just quantity');
+      console.log(checkCart);
 
-    if (checkCart !== undefined) {
-      //^ If cart arrays have same "productId", add quantity + 1 and run  setTotalPrice((prevPrice) => prevPrice + price);
-
-      setCart([
-        ...cart,
-        { name, productId, price, description, image, quantity },
-      ]);
+      const newCart = cart.map((item) => {
+        if (item.productId === productId) {
+          return {
+            ...item,
+            quantity: item.quantity + 1,
+          };
+        } else {
+          return item;
+        }
+      });
+      setCart((prevCart) => newCart);
 
       setTotalPrice((prevPrice) => prevPrice + price);
     } else {
-      //^ Else, setCart with new product and add total price
+      console.log('Adding new to cart');
+      //^ Else, setCart with new product and add to the total price
 
       setCart([
         ...cart,
@@ -54,6 +65,13 @@ export const ShoppingcartProvider = ({ children }) => {
     image,
     quantity
   ) => {
+    if (quantity < 1) {
+      console.log('removeFromCart:');
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.productId !== productId)
+      );
+    }
+
     setTotalPrice((prevPrice) => prevPrice - price);
   };
 
@@ -66,8 +84,19 @@ export const ShoppingcartProvider = ({ children }) => {
     quantity,
     removeTotalPrice
   ) => {
+    console.log('removeAll with id:');
+    console.log(productId);
+
+    console.log('Cart before:');
+    console.log(cart);
+
+    if (quantity < 1) {
+      setCart((prevCart) =>
+        prevCart.filter((item) => item.productId !== productId)
+      );
+    }
+
     setTotalPrice((prevPrice) => prevPrice - removeTotalPrice);
-    console.log('remove all func');
   };
 
   return (
