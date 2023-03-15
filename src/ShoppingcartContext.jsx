@@ -1,102 +1,58 @@
-import React, { useState, useEffect, createContext } from 'react';
+import React, { useState, createContext } from 'react';
 
+//^ Create the context and provider
 const ShoppingcartContext = createContext();
-
 export const ShoppingcartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
 
-  useEffect(() => {
-    console.log('Updated Shoppingcart in ShoppingcartContext:');
-    console.log(cart);
-    console.log(totalPrice);
-  }, [cart]);
-
-  const addToCart = (name, productId, price, description, image, quantity) => {
+  //^ Function used by the ProductItem. If product is not existing in the cart already, add the new product. Otherwise, add 1 to the quantity
+  const addToCart = (name, productId, price, quantity) => {
+    //^ Returns -1 as index if not found in the cart array
     const checkCart = cart.findIndex((item) => item.productId === productId);
-    console.log('checkCart:');
-    console.log(checkCart);
-    if (checkCart > -1) {
-      //^ If cart array have same "productId", add quantity + 1 and run  setTotalPrice((prevPrice) => prevPrice + price);
-      console.log('Adding just quantity');
-      console.log(checkCart);
 
-      const newCart = cart.map((item) => {
+    //^ Add as a new product and add price to the total
+    if (checkCart === -1) {
+      setCart([...cart, { name, productId, price, quantity }]);
+      setTotalPrice((prevPrice) => prevPrice + price);
+    }
+    //^ Already in the cart.. Add only quantity add price to the total
+    else {
+      const newArray = cart.map((item) => {
         if (item.productId === productId) {
-          return {
-            ...item,
-            quantity: item.quantity + 1,
-          };
+          return { ...item, quantity: item.quantity + 1 };
         } else {
           return item;
         }
       });
-      setCart((prevCart) => newCart);
 
-      setTotalPrice((prevPrice) => prevPrice + price);
-    } else {
-      console.log('Adding new to cart');
-      //^ Else, setCart with new product and add to the total price
-
-      setCart([
-        ...cart,
-        { name, productId, price, description, image, quantity },
-      ]);
+      setCart(newArray);
       setTotalPrice((prevPrice) => prevPrice + price);
     }
   };
 
-  const addMoreItems = (
-    name,
-    productId,
-    price,
-    description,
-    image,
-    quantity
-  ) => {
+  //^ From the CartItem, adding quantity to the current product. Also increase total price
+  const addMoreItems = (productId, price, quantity) => {
+    const newArray = cart.map((item) => {
+      if (item.productId === productId) {
+        return { ...item, quantity: quantity + 1 };
+      } else {
+        return item;
+      }
+    });
+
+    setCart(newArray);
     setTotalPrice((prevPrice) => prevPrice + price);
   };
 
-  const removeFromCart = (
-    name,
-    productId,
-    price,
-    description,
-    image,
-    quantity
-  ) => {
-    if (quantity < 1) {
-      console.log('removeFromCart:');
-      setCart((prevCart) =>
-        prevCart.filter((item) => item.productId !== productId)
-      );
-    }
+  //^ Remove all quantity for the product (Filtering out the product and setting the new total price)
+  const removeAll = (productId, price, quantity) => {
+    const totalPriceToRemove = quantity * price;
+    setTotalPrice((prevPrice) => prevPrice - totalPriceToRemove);
 
-    setTotalPrice((prevPrice) => prevPrice - price);
-  };
-
-  const removeAll = (
-    name,
-    productId,
-    price,
-    description,
-    image,
-    quantity,
-    removeTotalPrice
-  ) => {
-    console.log('removeAll with id:');
-    console.log(productId);
-
-    console.log('Cart before:');
-    console.log(cart);
-
-    if (quantity < 1) {
-      setCart((prevCart) =>
-        prevCart.filter((item) => item.productId !== productId)
-      );
-    }
-
-    setTotalPrice((prevPrice) => prevPrice - removeTotalPrice);
+    setCart((prevCart) =>
+      prevCart.filter((item) => item.productId !== productId)
+    );
   };
 
   return (
@@ -105,7 +61,6 @@ export const ShoppingcartProvider = ({ children }) => {
         cart,
         addToCart,
         totalPrice,
-        removeFromCart,
         addMoreItems,
         removeAll,
       }}

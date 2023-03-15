@@ -1,22 +1,30 @@
 import { useContext } from 'react';
 import { ShoppingcartContext } from '.././ShoppingcartContext';
-import Cart from './Cart';
-import ProductList from './ProductList';
+import { Link } from 'react-router-dom';
 
 const Navbar = () => {
   const { cart } = useContext(ShoppingcartContext);
+
+  //^ Iterates through every item in cart array and add every quantity. Initially initiated to 0. "totalItemsInCart" is then used at the bottom in the JSX to show number of items in cart (Only renders if cart.length > 0)
+  const totalItemsInCart = cart.reduce(
+    (total, item) => total + item.quantity,
+    0
+  );
+
+  //^ Rendering the navbar. This got two routes, one to the productlist/searchbar, and one to the shoppingcart. And an icon showing the number of total items currently in the cart. If cart array > 0, menaing it´s something there, a red circle with the number is shown. A reducer is being used to get the total number of items (and the quantity of each item!)
 
   return (
     <>
       <nav className="bg-white px-2 sm:px-4 py-2.5 w-full z-20 top-0 left-0 border-b border-gray-200">
         <div className="container flex flex-wrap items-center justify-between mx-auto">
-          <a className="flex items-center">
+          <Link to="/" className="flex items-center">
             <span className="self-center text-xl font-semibold whitespace-nowrap dark:text-white">
               Magic Store
             </span>
-          </a>
+          </Link>
           <div className="flex md:order-2">
-            <a
+            <Link
+              to="cart"
               type="button"
               className="relative inline-flex items-center px-5 py-2.5 "
             >
@@ -30,9 +38,11 @@ const Navbar = () => {
               </svg>
 
               {cart.length > 0 && (
-                <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -right-0.5"></div>
+                <div className="absolute inline-flex items-center justify-center w-6 h-6 text-xs font-bold text-white bg-red-500 border-2 border-white rounded-full -top-1 -right-0.5">
+                  {totalItemsInCart}
+                </div>
               )}
-            </a>
+            </Link>
           </div>
         </div>
       </nav>

@@ -1,42 +1,33 @@
-import { useState, useEffect, useContext } from 'react';
-import products from '../products.json';
-import { SearchresultContext } from '.././SearchresultContext';
+import { useState, useContext } from 'react';
+import products from '../products.json'; //^ Imported productlist
+import { SearchresultContext } from '.././SearchresultContext'; // ^Importing the context
 
 const SearchBar = () => {
   const [query, setQuery] = useState('');
   const [filteredList] = useState(products);
   const { searchProducts } = useContext(SearchresultContext);
 
-  // ^ Setting the default productlist
-  // useEffect(() => {
-  //   searchProducts(filteredList);
-  // }, []);
-
-  useEffect(() => {
-    console.log('Uppdaterad lista:');
-    console.log(filteredList);
-  }, [filteredList]);
-
+  //^ At searchbutton click, try to find matching description or name by using filtermethod. the new filtered array is then being set in searchresultcontext through the searchProducts function in that context
   const searchBtnClicked = (e) => {
-    //^ (If a function to reset result (and show no result) if searchstring is empty is needed, add it here using if/else statement)
-
     e.preventDefault();
-    console.log('Query: ' + query);
 
     const filtered = filteredList.filter(
       (item) =>
-        item.name && item.name.toLowerCase().includes(query.toLowerCase())
+        (item.name && item.name.toLowerCase().includes(query.toLowerCase())) ||
+        (item.description &&
+          item.description.toLowerCase().includes(query.toLowerCase()))
     );
     searchProducts(filtered);
-    setQuery('');
+    setQuery(''); //^ Clearing searchquery
   };
 
+  //^ Updating searchstring
   const setSearch = (e) => {
     setQuery(e.target.value);
   };
 
   return (
-    <div className="w-1/4">
+    <div className="w-3/4">
       <form className="mt-6">
         <label
           htmlFor="default-search"
